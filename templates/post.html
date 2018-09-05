@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="post-grid-container">
+    <div class="homepage-post">
+        <h3 class="post-heading"> {{post.title|title}}</h3> <aside class="category"> {{post.category}} </aside>
+        <br>
+        {% include "_editButtons.html" %}
+
+        <div class="post-info">
+            Posted on {{post.date_posted.strftime('%d %B, %Y')}}
+            <br>
+        </div>
+
+        <p> {{post.body | safe | oembed(html=False, urlize_all=False, maxwidth=600, maxheight=600)}} </p>
+        </div>
+
+</div>
+
+
+{% endblock content %}

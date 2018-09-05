@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{%block head %}
+{{ ckeditor.load() }}
+{% endblock head %}
+
+{% block content %}
+    <h1> New Post </h1>
+    <form action="" method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.title.label }}
+            {{ form.title(size=32) }}
+        </p>
+        <p>
+            {{ form.category.label }}
+            {{ form.category }}
+        </p>
+        <p>
+            {{ form.draft.label }}
+            {{ form.draft(size=32) }}
+        </p>
+
+        <p>
+            {{ form.body.label }}
+            {{ form.body(size=32)}}
+        </p>
+        <p>
+            {{ form.submit() }}
+        </p>
+
+        {{ ckeditor.load() }}
+ {{ ckeditor.config(name='body') }}
+{% endblock content %}

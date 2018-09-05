@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for post in posts %}
+    <h3>  <a href="{{ url_for('byslug', slug=post.slug)}}">{{post.title}}</a>  </h3>
+    <sub>Category: {{post.category}} | Posted on {{post.date_posted.strftime('%d %B, %Y')}}</sub>
+    {% if current_user.is_authenticated %}
+    <sub> <a href="{{url_for('edit_post', slug=post.slug)}}"> Edit </a> | <a href="{{url_for('delete_post', slug=post.slug)}}" onclick="confirmDelete(this)"> Delete</a> </sub>
+    {% else %}
+    {% endif %}
+    {% if post.draft %}
+        <p>Draft</p>
+    {% else %}
+        <p> Not Draft </p>
+    {% endif %}
+    <p> {{post.body | truncate(400) | safe}} </p>
+<p> Slug: {{post.slug}} </p>
+    <hr>
+{% endfor %}
+
+
+{% endblock %}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/base-min.css">
+        <meta charset="utf-8">
+        {% if title %}
+        <title> {{title}} </title>
+        {%else%}
+        <title> Antoni Devlin </title>
+        {% endif %}
+
+            {{ ckeditor.config() }}
+
+        <script type="text/javascript">
+            function confirmDelete(delUrl) {
+                if (confirm("Are you sure you want to delete")) {
+                    document.location = delUrl;
+                }
+            }
+
+        </script>
+    </head>
+    <body>
+        <div class="navigation">
+            <ul>
+                {% if current_user.is_anonymous %}
+                <li><a href="{{url_for('index')}}">Home</a></li>
+                <li><a href="{{url_for('login')}}">Login</a></li>
+                <li><a href="{{url_for('contact')}}">Contact</a></li>
+                <li><a href="{{url_for('about')}}">About</a></li>
+                {% else %}
+                <li><a href="{{url_for('index')}}">Home</a></li>
+                <li><a href="{{url_for('logout')}}">Logout</a></li>
+                <li><a href="{{url_for('add_post')}}">New Post</a></li>
+                <li><a href="{{url_for('admin')}}">Dashboard</a></li>
+                <li><a href="{{url_for('contact')}}">Contact</a></li>
+                <li><a href="{{url_for('about')}}">About</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        <div class="main-grid-container">
+          <div class="main-grid-item">{%block left_sidebar%}{%endblock left_sidebar%}</div>
+          <div class="main-grid-item">{% block content %}{% endblock content %}</div>
+          <div class="main-grid-item">{%block right_sidebar%}{%endblock right_sidebar%}</div>
+        </div>
+    </body>
+    <footer>
+
+
+
+
+    </footer>
+
+
+</html>

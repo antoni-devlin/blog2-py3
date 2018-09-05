@@ -1,0 +1,6 @@
+*.pyc
+.git
+venv
+migrations
+*.db
+*.scss

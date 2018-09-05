@@ -1,0 +1,27 @@
+{% extends "base.html" %} {% block head %} {% endblock head %} {% block content %}
+<h1 class="page-heading"> Antoni Devlin </h1>
+<hr>
+
+<div class="each-post-grid-container">
+    {% for post in posts %}
+
+    <div class="homepage-post">
+
+        <a href="{{ url_for('byslug', slug=post.slug)}}"><img src="https://via.placeholder.com/350x300" alt=""></a>
+        <h3 style=""><a href="{{ url_for('byslug', slug=post.slug)}}">{{post.title|title}}</a></h3><div style="float:right; display:inline" class="category"><strong>Category:</strong> {{post.category}} </div>
+        {% include "_editButtons.html" %}
+        <br>
+        <div class="date"> {{post.date_posted.strftime('%d %B, %Y')}} </div>
+
+
+
+        <p> {{post.body | truncate(250) | safe}} </p>
+    </div>
+
+
+
+    {% endfor %}
+</div>
+
+
+{% endblock content %} {% block tail %} {% endblock tail %}
