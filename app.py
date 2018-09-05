@@ -20,7 +20,7 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 database_file = "sqlite:///{}".format(os.path.join(project_dir, "blogdatabase.db"))
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'sjshlaiyeiruhkjgavksnlkvnslvsnlvsnlvnsdh536574988tufaa7v02j4ueyv7iu2'
+app.config['SECRET_KEY'] = 'sjshlaiyeiruhkjgavksnlkvnslvsnlvsnlvnsdh536574988tufaa7v02j4ueyv7iu2' #TEMPORARY KEY, CHANGE IN PRODUCTION
 app.config["SQLALCHEMY_DATABASE_URI"] = database_file
 
 
@@ -34,7 +34,7 @@ add_oembed_filters(app, oembed_providers)
 Scss(app, static_dir='static/styles', asset_dir='assets')
 
 
-
+#Posts Model
 class Post(db.Model):
 
     __tablename__ = 'posts'
@@ -46,11 +46,12 @@ class Post(db.Model):
     category = db.Column(db.String(80))
     draft = db.Column(db.Boolean(), default = True)
     body = db.Column(db.Text())
+    images = db.relationship('Image', backref='post', lazy='dynamic')
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
 
-# Automatic Slug generation (using slugify)
+# Automatic Slug generation (using slugify) (PART OF POSTS MODEL)
     @staticmethod
     def generate_slug(target, value, oldvalue, initiator):
         if not target.slug:
@@ -58,6 +59,23 @@ class Post(db.Model):
 
 event.listen(Post.title, 'set', Post.generate_slug, retval=False)
 
+#Images Model
+class Image(db.Model):
+
+    __tablename__ = 'images'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    filename = db.Column(db.String(25))
+    path = db.Column(db.Text())
+    date_posted = db.Column(db.DateTime(), index = True, default = datetime.utcnow)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+    def __repr__(self):
+        return '<Image {}>'.format(self.body)
+
+
+
+#Users Model
 class User(UserMixin, db.Model):
 
     __tablename__ = 'users'
