@@ -1,13 +1,11 @@
 #!/usr/bin/python3
 
 from flask import Flask, url_for, render_template, request, flash, redirect
-from flask_uploads import UploadSet, configure_uploads, IMAGES
 from slugify import slugify
 from flask_sqlalchemy import *
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, logout_user, login_user, current_user, login_required, login_manager
 from datetime import datetime
-from flask_ckeditor import CKEditor
 from .forms import AddEditPost, LoginForm, RegistrationForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.urls import url_parse
@@ -20,21 +18,24 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 database_file = "sqlite:///{}".format(os.path.join(project_dir, "blogdatabase.db"))
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'sjshlaiyeiruhkjgavksnlkvnslvsnlvsnlvnsdh536574988tufaa7v02j4ueyv7iu2' #TEMPORARY KEY, CHANGE IN PRODUCTION
-app.config["SQLALCHEMY_DATABASE_URI"] = database_file
-
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
-ckeditor = CKEditor(app)
-login.login_view = 'login'
 oembed_providers = bootstrap_basic()
 add_oembed_filters(app, oembed_providers)
 Scss(app, static_dir='static/styles', asset_dir='assets')
 
 
-#Posts Model
+app.config['SECRET_KEY'] = 'sjshlaiyeiruhkjgavksnlkvnslvsnlvsnlvnsdh536574988tufaa7v02j4ueyv7iu2' #TEMPORARY KEY, CHANGE IN PRODUCTION
+app.config["SQLALCHEMY_DATABASE_URI"] = database_file
+
+login.login_view = 'login'
+
+
+#DATABASE MODELS
+
+#Posts Table
 class Post(db.Model):
 
     __tablename__ = 'posts'
@@ -59,7 +60,7 @@ class Post(db.Model):
 
 event.listen(Post.title, 'set', Post.generate_slug, retval=False)
 
-#Images Model
+#Images Table (currently unused)
 class Image(db.Model):
 
     __tablename__ = 'images'
@@ -73,9 +74,7 @@ class Image(db.Model):
     def __repr__(self):
         return '<Image {}>'.format(self.body)
 
-
-
-#Users Model
+#Users Table
 class User(UserMixin, db.Model):
 
     __tablename__ = 'users'
@@ -94,6 +93,7 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+#User Loader
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -103,6 +103,7 @@ def load_user(id):
 def make_shell_context():
     return {'db': db, 'User': User, 'Post': Post}
 
+#Makes Titles Titlecase
 def title_case(s):
     word_list = re.split(' ', s)       # re.split behaves as expected
     final = [word_list[0].capitalize()]
@@ -119,6 +120,7 @@ def index():
     posts = Post.query.filter_by(draft=False).order_by(Post.date_posted.desc()) #Only shows published posts (Those without the 'draft' flag set).
     return render_template('index.html', posts=posts, title=title)
 
+#Admin Dashboard route
 @app.route('/admin')
 @app.route('/dashboard')
 @login_required
@@ -126,7 +128,7 @@ def admin():
     posts = Post.query.order_by(Post.date_posted.desc())
     return render_template('admin.html', posts=posts)
 
-#Add New Post Route
+#New Post Route
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_post():
@@ -138,7 +140,7 @@ def add_post():
         return redirect(url_for('index'))
     return render_template('add.html', form=form)
 
-# Edit Existing Post
+# Edit Post Route
 @app.route('/edit/<string:slug>', methods=['GET', 'POST'])
 @login_required
 def edit_post(slug):
@@ -153,6 +155,7 @@ def edit_post(slug):
         return redirect(url_for('index'))
     return render_template('add.html', form=form, title='Edit Post')
 
+#Delete Post Route
 @app.route('/delete/<string:slug>')
 @login_required
 def delete_post(slug):
@@ -166,6 +169,7 @@ def byslug(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
     return render_template("post.html", post=post, slug=slug)
 
+# Register Route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -180,6 +184,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+#Login Route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -197,23 +202,28 @@ def login():
         return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
 
+#Logout Route
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
+#Contact Page Route
 @app.route('/contact')
 def contact():
     title = 'Contact'
     return render_template('contact.html', title=title)
 
+#About Page Route
 @app.route('/about')
 def about():
     title = 'About'
     return render_template('about.html', title=title)
 
-# Error handling
+# ERROR HANDLING
+
+# Error 404
 @app.errorhandler(404)
 def page_not_found(e):
     title = 'Not Found'
