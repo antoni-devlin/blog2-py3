@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+{% block head %}
     <head>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
         <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/base-min.css">
@@ -10,17 +11,19 @@
         <title> Antoni Devlin </title>
         {% endif %}
 
-            {{ ckeditor.config() }}
-
         <script type="text/javascript">
             function confirmDelete(delUrl) {
                 if (confirm("Are you sure you want to delete")) {
                     document.location = delUrl;
                 }
             }
-
         </script>
+
+        <script src="https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=e3u4r82xjevyr2pl042kautfeq6lcoqx2wcubi3tbzwko6a1"></script>
+        <script src="{{ url_for('static', filename='js/tinymce/tinymce-config.js') }}" charset="utf-8"></script>
+
     </head>
+    {% endblock head %}
     <body>
         <div class="navigation">
             <ul>

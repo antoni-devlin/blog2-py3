@@ -1,13 +1,9 @@
 {% extends "base.html" %}
 
-{%block head %}
-{{ ckeditor.load() }}
-{% endblock head %}
-
 {% block content %}
     <h1> New Post </h1>
     <form action="" method="POST" novalidate>
-        {{ form.hidden_tag() }}
+            {{ form.hidden_tag() }}
         <p>
             {{ form.title.label }}
             {{ form.title(size=32) }}
@@ -20,15 +16,48 @@
             {{ form.draft.label }}
             {{ form.draft(size=32) }}
         </p>
-
         <p>
             {{ form.body.label }}
-            {{ form.body(size=32)}}
+            {{ form.body(class='tinymce')}}
         </p>
         <p>
             {{ form.submit() }}
         </p>
 
-        {{ ckeditor.load() }}
- {{ ckeditor.config(name='body') }}
+<script type="text/javascript">
+tinymce.init({
+selector: 'textarea.tinymce',
+plugins: [
+          'advlist autolink link image imagetools lists charmap print preview hr anchor pagebreak spellchecker',
+          'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+          'save table contextmenu directionality emoticons template paste textcolor'
+        ],
+height: 600,
+imagetools_toolbar: "rotateleft rotateright | flipv fliph | editimage imageoptions",
+toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+automatic_uploads: true,
+images_reuse_filename: false,
+paste_data_images: true,
+});
+</script>
+
+<script type="text/javascript">
+$(function() {
+$('#upload-file-btn').click(function() {
+    var form_data = new FormData($('#upload-file')[0]);
+    $.ajax({
+        type: 'POST',
+        url: '/uploadajax',
+        data: form_data,
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(data) {
+            console.log('Success!');
+        },
+    });
+});
+});
+</script>
+
 {% endblock content %}
