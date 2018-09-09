@@ -4,3 +4,5 @@ venv
 migrations
 *.db
 *.scss
+.flaskenv
+__pycache__
