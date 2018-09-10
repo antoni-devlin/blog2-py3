@@ -12,6 +12,11 @@
             {{form.header_image.label}}
             {{form.header_image}}
         </p>
+        {% if post.header_image %}
+        <img src="/static/media/images/{{ post.header_image }}" alt={{ post.header_image }}/>
+        {% else %}
+        <p>No header</p>
+        {% endif %}
         <p>
             {{ form.category.label }}
             {{ form.category }}

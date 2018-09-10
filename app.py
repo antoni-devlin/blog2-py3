@@ -132,6 +132,7 @@ def admin():
 @login_required
 def add_post():
     form = AddEditPost()
+    post = Post()
     if form.validate_on_submit():
         if form.header_image.data !='' :
             filename = secure_filename(form.header_image.data.filename)
@@ -149,7 +150,7 @@ def add_post():
             db.session.add(post)
             db.session.commit()
         return redirect(url_for('index'))
-    return render_template('add.html', form=form)
+    return render_template('add.html', form=form, post = post)
 
 # Edit Post Route
 @app.route('/edit/<string:slug>', methods=['GET', 'POST'])
@@ -157,20 +158,29 @@ def add_post():
 def edit_post(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
     form = AddEditPost(obj=post)
+    header_image = post.header_image
     if form.validate_on_submit():
-        post.title = form.title.data
-        post.category = form.category.data
-        post.draft = form.draft.data
-        post.body = form.body.data
-        db.session.commit()
-        return redirect(url_for('index'))
-    return render_template('add.html', form=form, title='Edit Post')
+        if form.header_image.data !='' :
+            filename = secure_filename(form.header_image.data.filename)
+            fullpath = UPLOAD_FOLDER + filename
+            form.header_image.data.save(fullpath)
 
-#Image Uploading Route
-# @app.route('/upload', methods=['POST'])
-# def upload_file():
-
-
+            post.title = form.title.data
+            post.category = form.category.data
+            post.draft = form.draft.data
+            post.body = form.body.data
+            post.header_image = filename
+            post.header_image_path = fullpath
+            db.session.commit()
+            return redirect(url_for('index'))
+        else:
+            post.title = form.title.data
+            post.category = form.category.data
+            post.draft = form.draft.data
+            post.body = form.body.data
+            db.session.commit()
+            return redirect(url_for('index'))
+    return render_template('add.html', form=form, title='Edit Post', post = post)
 
 @app.route('/images')
 def images():
