@@ -59,7 +59,16 @@
     float: right;
     display: inline; }
 
-    footer {
-      position: fixed;
-      bottom: 0;
-      left: 0; }
+    .admin-table table, .admin-table td, .admin-table th {
+      border: 1px solid #ddd;
+      text-align: left; }
+      .admin-table table {
+        border-collapse: collapse;
+        width: 100%; }
+        .admin-table th, .admin-table td {
+          padding: 15px; }
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0; }
