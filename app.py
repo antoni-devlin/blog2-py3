@@ -195,7 +195,7 @@ def delete_post(slug):
     db.session.commit()
     return redirect(url_for('index'))
 
-# Navigate to post by slug
+# display post by slug
 @app.route('/post/<string:slug>')
 def byslug(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
