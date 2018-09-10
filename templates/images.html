@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% for image in images %}
+    <p> Image name: {{ image.filename }} </p>
+    <p> Date poste: {{ image.date_posted }} </p>
+    <p> Post: {{ image.posted_in }} </p>
+    {% endfor %}
+
+{% endblock content %}

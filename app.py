@@ -1,23 +1,35 @@
 #!/usr/bin/python3
 
 from flask import Flask, url_for, render_template, request, flash, redirect
+from flask_uploads import UploadSet, configure_uploads, IMAGES
 from slugify import slugify
 from flask_sqlalchemy import *
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, logout_user, login_user, current_user, login_required, login_manager
 from datetime import datetime
-from .forms import AddEditPost, LoginForm, RegistrationForm
+from forms import AddEditPost, LoginForm, RegistrationForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.urls import url_parse
 from flask_scss import Scss
 from micawber.providers import bootstrap_basic
 from micawber.contrib.mcflask import add_oembed_filters
+from werkzeug.utils import secure_filename
 import os, re
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 database_file = "sqlite:///{}".format(os.path.join(project_dir, "blogdatabase.db"))
 
+UPLOAD_FOLDER = project_dir + "/static/media/images/"
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
 app = Flask(__name__)
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -47,7 +59,8 @@ class Post(db.Model):
     category = db.Column(db.String(80))
     draft = db.Column(db.Boolean(), default = True)
     body = db.Column(db.Text())
-    images = db.relationship('Image', backref='post', lazy='dynamic')
+    header_image = db.Column(db.String)
+    header_image_path = db.Column(db.String)
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
@@ -59,20 +72,6 @@ class Post(db.Model):
             target.slug = slugify(value)
 
 event.listen(Post.title, 'set', Post.generate_slug, retval=False)
-
-#Images Table (currently unused)
-class Image(db.Model):
-
-    __tablename__ = 'images'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    filename = db.Column(db.String(25))
-    path = db.Column(db.Text())
-    date_posted = db.Column(db.DateTime(), index = True, default = datetime.utcnow)
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-
-    def __repr__(self):
-        return '<Image {}>'.format(self.body)
 
 #Users Table
 class User(UserMixin, db.Model):
@@ -101,7 +100,7 @@ def load_user(id):
 #Home Page Route
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User, 'Post': Post}
+    return {'db': db, 'User': User, 'Post': Post, 'Image': Image}
 
 #Makes Titles Titlecase
 def title_case(s):
@@ -134,9 +133,21 @@ def admin():
 def add_post():
     form = AddEditPost()
     if form.validate_on_submit():
-        post = Post(title = form.title.data, category = form.category.data, draft = form.draft.data, body = form.body.data)
-        db.session.add(post)
-        db.session.commit()
+        if form.header_image.data !='' :
+            filename = secure_filename(form.header_image.data.filename)
+            fullpath = UPLOAD_FOLDER + filename
+            form.header_image.data.save(fullpath)
+
+            post = Post(title = form.title.data, category = form.category.data, draft = form.draft.data, body = form.body.data, header_image = filename, header_image_path = fullpath)
+
+            db.session.add(post)
+            db.session.commit()
+            return redirect(url_for('index'))
+        else:
+            post = Post(title = form.title.data, category = form.category.data, draft = form.draft.data, body = form.body.data)
+
+            db.session.add(post)
+            db.session.commit()
         return redirect(url_for('index'))
     return render_template('add.html', form=form)
 
@@ -154,6 +165,17 @@ def edit_post(slug):
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('add.html', form=form, title='Edit Post')
+
+#Image Uploading Route
+# @app.route('/upload', methods=['POST'])
+# def upload_file():
+
+
+
+@app.route('/images')
+def images():
+    images = Image.query.order_by(Image.date_posted.desc())
+    return render_template('images.html', images=images)
 
 #Delete Post Route
 @app.route('/delete/<string:slug>')

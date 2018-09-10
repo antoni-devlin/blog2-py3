@@ -10,6 +10,8 @@ class AddEditPost(FlaskForm):
     draft = BooleanField('Draft')
     body = TextAreaField('Content Area')
     submit = SubmitField('Save Post')
+    header_image = FileField('Header Image')
+
 
 # Login Form
 class LoginForm(FlaskForm):
