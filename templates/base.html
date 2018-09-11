@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+{% block head %}
     <head>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
         <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/base-min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <meta charset="utf-8">
         {% if title %}
         <title> {{title}} </title>
@@ -10,32 +12,35 @@
         <title> Antoni Devlin </title>
         {% endif %}
 
-            {{ ckeditor.config() }}
-
         <script type="text/javascript">
             function confirmDelete(delUrl) {
                 if (confirm("Are you sure you want to delete")) {
                     document.location = delUrl;
                 }
             }
-
         </script>
+
+        <script src="https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=e3u4r82xjevyr2pl042kautfeq6lcoqx2wcubi3tbzwko6a1"></script>
+
+        <link rel="shortcut icon" href="{{ url_for('static', filename='media/images/favicon.png') }}">
+
     </head>
+    {% endblock head %}
     <body>
         <div class="navigation">
             <ul>
                 {% if current_user.is_anonymous %}
                 <li><a href="{{url_for('index')}}">Home</a></li>
-                <li><a href="{{url_for('login')}}">Login</a></li>
                 <li><a href="{{url_for('contact')}}">Contact</a></li>
                 <li><a href="{{url_for('about')}}">About</a></li>
+                <li><a href="{{url_for('login')}}">Login</a></li>
                 {% else %}
                 <li><a href="{{url_for('index')}}">Home</a></li>
-                <li><a href="{{url_for('logout')}}">Logout</a></li>
-                <li><a href="{{url_for('add_post')}}">New Post</a></li>
                 <li><a href="{{url_for('admin')}}">Dashboard</a></li>
+                <li><a href="{{url_for('add_post')}}">New Post</a></li>
                 <li><a href="{{url_for('contact')}}">Contact</a></li>
                 <li><a href="{{url_for('about')}}">About</a></li>
+                <li><a href="{{url_for('logout')}}">Logout</a></li>
                 {% endif %}
             </ul>
         </div>

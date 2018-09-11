@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 
-{%block head %}
-{{ ckeditor.load() }}
-{% endblock head %}
-
 {% block content %}
     <h1> New Post </h1>
-    <form action="" method="POST" novalidate>
-        {{ form.hidden_tag() }}
+    <form action="" method="POST" novalidate enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
         <p>
             {{ form.title.label }}
             {{ form.title(size=32) }}
         </p>
+        <p>
+            {{form.header_image.label}}
+            {{form.header_image}}
+        </p>
+        {% if post.header_image %}
+        <img src="/static/media/images/{{ post.header_image }}" alt={{ post.header_image }}/>
+        {% else %}
+        <p>No header</p>
+        {% endif %}
         <p>
             {{ form.category.label }}
             {{ form.category }}
@@ -20,15 +25,38 @@
             {{ form.draft.label }}
             {{ form.draft(size=32) }}
         </p>
-
         <p>
             {{ form.body.label }}
-            {{ form.body(size=32)}}
+            {{ form.body(class='tinymce')}}
         </p>
         <p>
             {{ form.submit() }}
         </p>
+    </form>
 
-        {{ ckeditor.load() }}
- {{ ckeditor.config(name='body') }}
+    <!-- <form id="uploadform" action="" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" value="">
+        <button id="upload-file-btn" type="submit" name="submit">Upload image</button>
+    </form> -->
+
+<!-- Script for TInyMCE integration. Hooks into the form.body above with class 'tinymce' -->
+<script type="text/javascript">
+tinymce.init({
+selector: 'textarea.tinymce',
+plugins: [
+          'advlist autolink link image imagetools lists charmap print preview hr anchor pagebreak spellchecker',
+          'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+          'save table contextmenu directionality emoticons template paste textcolor'
+        ],
+height: 600,
+imagetools_toolbar: "rotateleft rotateright | flipv fliph | editimage imageoptions",
+toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+automatic_uploads: true,
+images_reuse_filename: false,
+paste_data_images: true,
+});
+</script>
+
+<script src="{{ url_for('static', filename='js/form.js') }}" charset="utf-8"></script>
+
 {% endblock content %}

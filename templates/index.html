@@ -1,4 +1,8 @@
-{% extends "base.html" %} {% block head %} {% endblock head %} {% block content %}
+{% extends "base.html" %}
+
+
+
+{% block content %}
 <h1 class="page-heading"> Antoni Devlin </h1>
 <hr>
 
@@ -7,7 +11,13 @@
 
     <div class="homepage-post">
 
-        <a href="{{ url_for('byslug', slug=post.slug)}}"><img src="https://via.placeholder.com/350x300" alt=""></a>
+        <a href="{{ url_for('byslug', slug=post.slug)}}">
+            {% if post.header_image %}
+            <img width="350" height="300" src="/static/media/images/{{ post.header_image }}" alt={{ post.header_image }}>
+            {% else %}
+            <img width="350" height="300" src="/static/media/images/placeholder.png" alt="Placeholder">
+            {% endif %}
+        </a>
         <h3 style=""><a href="{{ url_for('byslug', slug=post.slug)}}">{{post.title|title}}</a></h3><div style="float:right; display:inline" class="category"><strong>Category:</strong> {{post.category}} </div>
         {% include "_editButtons.html" %}
         <br>

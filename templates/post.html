@@ -11,6 +11,11 @@
             Posted on {{post.date_posted.strftime('%d %B, %Y')}}
             <br>
         </div>
+        {% if post.header_image %}
+        <div class="header-container">
+            <img style="object-fit:contain" header_image height="300" src="/static/media/images/{{ post.header_image }}" alt="{{ post.header_image }}">
+        {% endif %}
+        </div>
 
         <p> {{post.body | safe | oembed(html=False, urlize_all=False, maxwidth=600, maxheight=600)}} </p>
         </div>
