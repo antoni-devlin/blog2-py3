@@ -6,3 +6,4 @@ migrations
 *.scss
 .flaskenv
 __pycache__
+images
