@@ -1,12 +1,14 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField, FileField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+from wtforms_sqlalchemy.fields import QuerySelectField
+
 
 
 # Add new post or edit exisiting post form
 class AddEditPost(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
-    category = SelectField(u'Category', choices=[('video', 'Video'), ('tech', 'Tech'), ('food', 'Food'), ('writing', 'Writing')])
+    category = SelectField(u'Category', choices=[('Writing', 'writing'), ('Tech', 'tech'), ('food', 'Food'), ('video', 'Video')])
     draft = BooleanField('Draft')
     body = TextAreaField('Content Area')
     submit = SubmitField('Save Post')
