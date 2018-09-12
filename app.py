@@ -7,13 +7,14 @@ from flask_sqlalchemy import *
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, logout_user, login_user, current_user, login_required, login_manager
 from datetime import datetime
-from forms import AddEditPost, LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm, AddEditPost
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.urls import url_parse
 from flask_scss import Scss
 from micawber.providers import bootstrap_basic
 from micawber.contrib.mcflask import add_oembed_filters
 from werkzeug.utils import secure_filename
+from wtforms_sqlalchemy.fields import QuerySelectField
 import os, re
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +30,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -127,6 +127,10 @@ def admin():
     posts = Post.query.order_by(Post.date_posted.desc())
     return render_template('admin.html', posts=posts)
 
+def category_choice():
+    return Category.query
+
+
 #New Post Route
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -200,6 +204,14 @@ def delete_post(slug):
 def byslug(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
     return render_template("post.html", post=post, slug=slug)
+
+
+
+#Display category page
+@app.route('/<string:category>')
+def bycategory(category):
+    posts = Post.query.filter_by(category=category)
+    return render_template("categorylist.html", posts=posts, category=category)
 
 # Register Route
 @app.route('/register', methods=['GET', 'POST'])
