@@ -101,7 +101,7 @@ def load_user(id):
 #Home Page Route
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User, 'Post': Post, 'Image': Image}
+    return {'db': db, 'User': User, 'Post': Post}
 
 #Makes Titles Titlecase
 def title_case(s):
