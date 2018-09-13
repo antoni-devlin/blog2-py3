@@ -32,7 +32,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 migrate = Migrate(app, db)
 login = LoginManager(app)
 oembed_providers = bootstrap_basic()
