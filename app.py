@@ -15,10 +15,14 @@ from micawber.providers import bootstrap_basic
 from micawber.contrib.mcflask import add_oembed_filters
 from werkzeug.utils import secure_filename
 from wtforms_sqlalchemy.fields import QuerySelectField
+from flask_heroku import Heroku
+import sys
+import logging
 import os, re
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
-database_file = 'postgresql://localhost/blogdatabase'
+
+database_file = os.environ['DATABASE_URL']
 
 
 UPLOAD_FOLDER = project_dir + "/static/media/images/"
@@ -44,7 +48,7 @@ app.config['SECRET_KEY'] = 'sjshlaiyeiruhkjgavksnlkvnslvsnlvsnlvnsdh536574988tuf
 app.config["SQLALCHEMY_DATABASE_URI"] = database_file
 
 login.login_view = 'login'
-
+heroku = Heroku(app)
 
 #DATABASE MODELS
 
@@ -101,7 +105,7 @@ def load_user(id):
 #Home Page Route
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User, 'Post': Post, 'Image': Image}
+    return {'db': db, 'User': User, 'Post': Post}
 
 #Makes Titles Titlecase
 def title_case(s):
