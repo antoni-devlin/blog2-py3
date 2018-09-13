@@ -2,6 +2,5 @@
 .git
 venv
 *.db
-*.scss
 .flaskenv
 __pycache__
