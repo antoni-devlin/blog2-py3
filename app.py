@@ -16,6 +16,8 @@ from micawber.contrib.mcflask import add_oembed_filters
 from werkzeug.utils import secure_filename
 from wtforms_sqlalchemy.fields import QuerySelectField
 from flask_heroku import Heroku
+import sys
+import logging
 import os, re
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
