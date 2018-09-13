@@ -4,3 +4,4 @@ venv
 *.db
 .flaskenv
 __pycache__
+images
