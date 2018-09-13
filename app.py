@@ -15,6 +15,7 @@ from micawber.providers import bootstrap_basic
 from micawber.contrib.mcflask import add_oembed_filters
 from werkzeug.utils import secure_filename
 from wtforms_sqlalchemy.fields import QuerySelectField
+from flask_heroku import Heroku
 import os, re
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -43,7 +44,7 @@ app.config['SECRET_KEY'] = 'sjshlaiyeiruhkjgavksnlkvnslvsnlvsnlvnsdh536574988tuf
 app.config["SQLALCHEMY_DATABASE_URI"] = database_file
 
 login.login_view = 'login'
-
+heroku = Heroku(app)
 
 #DATABASE MODELS
 
