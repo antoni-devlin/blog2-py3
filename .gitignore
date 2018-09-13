@@ -1,9 +1,7 @@
 *.pyc
 .git
 venv
-migrations
 *.db
 *.scss
 .flaskenv
 __pycache__
-images

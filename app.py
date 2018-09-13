@@ -32,7 +32,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-db = SQLAlchemy()
+db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
 oembed_providers = bootstrap_basic()
@@ -41,7 +41,7 @@ Scss(app, static_dir='static/styles', asset_dir='assets')
 
 
 app.config['SECRET_KEY'] = 'sjshlaiyeiruhkjgavksnlkvnslvsnlvsnlvnsdh536574988tufaa7v02j4ueyv7iu2' #TEMPORARY KEY, CHANGE IN PRODUCTION
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ['DATABASE_URL']
+app.config["SQLALCHEMY_DATABASE_URI"] = database_file
 
 login.login_view = 'login'
 heroku = Heroku(app)
