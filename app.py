@@ -21,7 +21,7 @@ import logging
 import os, re
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
-database_file = "sqlite:///{}".format(os.path.join(project_dir, "blogdatabase.db"))
+database_file = os.environ['DATABASE_URL']
 
 UPLOAD_FOLDER = project_dir + "/static/media/images/"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
