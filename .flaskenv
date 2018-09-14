@@ -1,3 +1,2 @@
 FLASK_APP = app.py
-FLASK_ENV = development
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+FLASK_ENV = production

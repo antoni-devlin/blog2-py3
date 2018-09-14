@@ -40,6 +40,7 @@ app = Flask(__name__)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config["SQLALCHEMY_DATABASE_URI"] = database_file
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 def allowed_file(filename):
     return '.' in filename and \
