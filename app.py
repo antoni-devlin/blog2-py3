@@ -23,10 +23,10 @@ import os, re
 project_dir = os.path.dirname(os.path.abspath(__file__))
 
 #Production DB
-database_file = os.environ['DATABASE_URL']
+database_file = os.environ.get['DATABASE_URL']
 
 #Development DB
-database_file = 'postgresql://localhost/blogdatabase'
+# database_file = 'postgresql://localhost/blogdatabase'
 
 UPLOAD_FOLDER = project_dir + "/static/media/images/"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
