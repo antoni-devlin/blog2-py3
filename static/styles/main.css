@@ -69,6 +69,13 @@
           padding: 15px; }
 
 footer {
-  position: fixed;
-  bottom: 0;
-  left: 0; }
+  height: 60px; }
+  footer .builtby {
+    padding: 20px;
+    float: left; }
+    footer .socialicons {
+      float: right;
+      font-size: 30px;
+      padding: 20px; }
+      footer .socialicons i {
+        padding-left: 20px; }
