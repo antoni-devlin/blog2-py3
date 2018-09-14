@@ -22,8 +22,16 @@ import os, re
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 
-#Production DB
-database_file = os.environ['DATABASE_URL']
+
+
+if not os.environ.get('DATABASE_URL'):
+    #Developement Database
+    database_file = 'postgres://localhost/blogdatabase'
+    print('\n--CUSTOM ALERT--\nDatabase_URL is %s\n--END ALERT--' % database_file)
+else:
+    #Production Database
+    database_file = os.environ['DATABASE_URL']
+    print('\n--CUSTOM ALERT--\nDatabase_URL is %s\n--END ALERT--' % database_file)
 
 UPLOAD_FOLDER = project_dir + "/static/media/images/"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
