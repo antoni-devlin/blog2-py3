@@ -19,10 +19,9 @@ from flask_heroku import Heroku
 import sys
 import logging
 import os, re
+from email_notifications import sendemail
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
-
-
 
 if not os.environ.get('DATABASE_URL'):
     #Developement Database
@@ -41,6 +40,7 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config["SQLALCHEMY_DATABASE_URI"] = database_file
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -126,8 +126,11 @@ def title_case(s):
     return " ".join(final)
 
 #Homepage route
-@app.route('/')
 @app.route('/index')
+def go_index():
+    return redirect('/')
+
+@app.route('/')
 def index():
     title = 'Antoni Devlin | Blog'
     posts = Post.query.filter_by(draft=False).order_by(Post.date_posted.desc()) #Only shows published posts (Those without the 'draft' flag set).
@@ -161,12 +164,14 @@ def add_post():
 
             db.session.add(post)
             db.session.commit()
+            sendemail('antoni.devlin@gmail.com', 'New post: %s' % post.title, 'no-reply@flaskminima.com', 'This is a test!')
             return redirect(url_for('index'))
         else:
             post = Post(title = form.title.data, category = form.category.data, draft = form.draft.data, body = form.body.data)
 
             db.session.add(post)
             db.session.commit()
+        sendemail('antoni.devlin@gmail.com', 'New post: %s' % post.title, 'no-reply@flaskminima.com', 'This is a test!')
         return redirect(url_for('index'))
     return render_template('add.html', form=form, post = post)
 

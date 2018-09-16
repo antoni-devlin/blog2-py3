@@ -1,1 +1,5 @@
-stuff
+ToDo:
+- Tighten up css
+- Add email notification support (Sendgrid)
+- Add a configuration screen (potentially waffleconf)
+- 
