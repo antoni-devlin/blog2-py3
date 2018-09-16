@@ -1,5 +1,7 @@
 ToDo:
 - Tighten up css
-- Add email notification support (Sendgrid)
+- Add email notification support (Sendgrid) [DONE]
 - Add a configuration screen (potentially waffleconf)
-- 
+- Add remote draft posting (email, trello, airtable)
+- Make a ReadMe
+- Update repo names to Flask Minima

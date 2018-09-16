@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from flask import Flask, url_for, render_template, request, flash, redirect
+from flask import Flask, url_for, render_template, request, flash, redirect, abort
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from slugify import slugify
 from flask_sqlalchemy import *
@@ -144,10 +144,6 @@ def admin():
     posts = Post.query.order_by(Post.date_posted.desc())
     return render_template('admin.html', posts=posts)
 
-def category_choice():
-    return Category.query
-
-
 #New Post Route
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -164,14 +160,14 @@ def add_post():
 
             db.session.add(post)
             db.session.commit()
-            sendemail('antoni.devlin@gmail.com', 'New post: %s' % post.title, 'no-reply@flaskminima.com', 'This is a test!')
+            sendemail('antoni.devlin@gmail.com', 'New post: {}'.format(post.title), 'no-reply@flaskminima.com', 'Post title: {}\nPost Category: {}\nDate Posted: {}\nStatus: {}\n'.format(post.title, post.category, post.date_posted, post.draft))
             return redirect(url_for('index'))
         else:
             post = Post(title = form.title.data, category = form.category.data, draft = form.draft.data, body = form.body.data)
 
             db.session.add(post)
             db.session.commit()
-        sendemail('antoni.devlin@gmail.com', 'New post: %s' % post.title, 'no-reply@flaskminima.com', 'This is a test!')
+        sendemail('antoni.devlin@gmail.com', 'New post: {}'.format(post.title), 'no-reply@flaskminima.com', 'Post title: {}\nPost Category: {}\nDate Posted: {}\nStatus: {}\n'.format(post.title, post.category, post.date_posted, post.draft))
         return redirect(url_for('index'))
     return render_template('add.html', form=form, post = post)
 
@@ -204,11 +200,6 @@ def edit_post(slug):
             db.session.commit()
             return redirect(url_for('index'))
     return render_template('add.html', form=form, title='Edit Post', post = post)
-
-@app.route('/images')
-def images():
-    images = Image.query.order_by(Image.date_posted.desc())
-    return render_template('images.html', images=images)
 
 #Delete Post Route
 @app.route('/delete/<string:slug>')
