@@ -5,6 +5,7 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
         <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/base-min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        {{ moment.include_moment() }}
         <meta charset="utf-8">
         {% if title %}
         <title> {{title}} </title>

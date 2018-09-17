@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-
 from flask import Flask, url_for, render_template, request, flash, redirect, abort
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from slugify import slugify
 from flask_sqlalchemy import *
+from sqlalchemy import func, distinct
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, logout_user, login_user, current_user, login_required, login_manager
 from datetime import datetime
@@ -20,6 +20,8 @@ import sys
 import logging
 import os, re
 from email_notifications import sendemail
+from flask_moment import Moment
+
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -52,6 +54,7 @@ login = LoginManager(app)
 oembed_providers = bootstrap_basic()
 add_oembed_filters(app, oembed_providers)
 Scss(app, static_dir='static/styles', asset_dir='assets')
+moment = Moment(app)
 
 
 app.config['SECRET_KEY'] = 'sjshlaiyeiruhkjgavksnlkvnslvsnlvsnlvnsdh536574988tufaa7v02j4ueyv7iu2' #TEMPORARY KEY, CHANGE IN PRODUCTION
@@ -61,9 +64,13 @@ heroku = Heroku(app)
 
 #DATABASE MODELS
 
+category_association = db.Table('category_association', db.Model.metadata,
+db.Column('post_id', db.Integer, db.ForeignKey('posts.id')),
+db.Column('category_id', db.Integer, db.ForeignKey('categories.id'))
+)
+
 #Posts Table
 class Post(db.Model):
-
     __tablename__ = 'posts'
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -87,9 +94,15 @@ class Post(db.Model):
 
 event.listen(Post.title, 'set', Post.generate_slug, retval=False)
 
+class Category(db.Model):
+    __tablename__ = 'categories'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), index=True, unique=True)
+    posts = db.relationship("Post", secondary=category_association, lazy='dynamic')
+
 #Users Table
 class User(UserMixin, db.Model):
-
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -114,7 +127,7 @@ def load_user(id):
 #Home Page Route
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User, 'Post': Post}
+    return {'db': db, 'User': User, 'Post': Post, 'Category': Category}
 
 #Makes Titles Titlecase
 def title_case(s):
@@ -144,6 +157,12 @@ def admin():
     posts = Post.query.order_by(Post.date_posted.desc())
     return render_template('admin.html', posts=posts)
 
+#Display category page
+@app.route('/<string:category>')
+def bycategory(category):
+    posts = Post.query.filter_by(category=category)
+    return render_template("categorylist.html", posts=posts, category=category)
+
 #New Post Route
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -158,16 +177,18 @@ def add_post():
 
             post = Post(title = form.title.data, category = form.category.data, draft = form.draft.data, body = form.body.data, header_image = filename, header_image_path = fullpath)
 
+            
+
             db.session.add(post)
             db.session.commit()
-            sendemail('antoni.devlin@gmail.com', 'New post: {}'.format(post.title), 'no-reply@flaskminima.com', 'Post title: {}\nPost Category: {}\nDate Posted: {}\nStatus: {}\n'.format(post.title, post.category, post.date_posted, post.draft))
+            # sendemail('antoni.devlin@gmail.com', 'New post: {}'.format(post.title), 'no-reply@flaskminima.com', 'Post title: {}\nPost Category: {}\nDate Posted: {}\nStatus: {}\n'.format(post.title, post.category, post.date_posted, post.draft))
             return redirect(url_for('index'))
         else:
             post = Post(title = form.title.data, category = form.category.data, draft = form.draft.data, body = form.body.data)
 
             db.session.add(post)
             db.session.commit()
-        sendemail('antoni.devlin@gmail.com', 'New post: {}'.format(post.title), 'no-reply@flaskminima.com', 'Post title: {}\nPost Category: {}\nDate Posted: {}\nStatus: {}\n'.format(post.title, post.category, post.date_posted, post.draft))
+        # sendemail('antoni.devlin@gmail.com', 'New post: {}'.format(post.title), 'no-reply@flaskminima.com', 'Post title: {}\nPost Category: {}\nDate Posted: {}\nStatus: {}\n'.format(post.title, post.category, post.date_posted, post.draft))
         return redirect(url_for('index'))
     return render_template('add.html', form=form, post = post)
 
@@ -214,14 +235,6 @@ def delete_post(slug):
 def byslug(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
     return render_template("post.html", post=post, slug=slug)
-
-
-
-#Display category page
-@app.route('/<string:category>')
-def bycategory(category):
-    posts = Post.query.filter_by(category=category)
-    return render_template("categorylist.html", posts=posts, category=category)
 
 # Register Route
 @app.route('/register', methods=['GET', 'POST'])

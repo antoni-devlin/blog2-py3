@@ -3,5 +3,7 @@ ToDo:
 - Add email notification support (Sendgrid) [DONE]
 - Add a configuration screen (potentially waffleconf)
 - Add remote draft posting (email, trello, airtable)
+- Add moment.js support?
 - Make a ReadMe
 - Update repo names to Flask Minima
+- Add analytics

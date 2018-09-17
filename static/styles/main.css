@@ -64,7 +64,9 @@
       text-align: left; }
       .admin-table table {
         border-collapse: collapse;
-        width: 100%; }
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto; }
         .admin-table th, .admin-table td {
           padding: 15px; }
 
