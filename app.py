@@ -3,7 +3,7 @@ from flask import Flask, url_for, render_template, request, flash, redirect, abo
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from slugify import slugify
 from flask_sqlalchemy import *
-from sqlalchemy import func, distinct
+from sqlalchemy import func, distinct, exists
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, logout_user, login_user, current_user, login_required, login_manager
 from datetime import datetime
@@ -155,12 +155,20 @@ def index():
 @login_required
 def admin():
     posts = Post.query.order_by(Post.date_posted.desc())
-    return render_template('admin.html', posts=posts)
+    writing_posts = Post.query.filter_by(category='writing')
+    tech_posts = Post.query.filter_by(category='tech')
+    food_posts = Post.query.filter_by(category='food')
+    video_posts = Post.query.filter_by(category='video')
+    return render_template('admin.html', posts=posts, writing_posts=writing_posts, tech_posts=tech_posts, food_posts=food_posts, video_posts=video_posts)
 
 #Display category page
 @app.route('/<string:category>')
 def bycategory(category):
-    posts = Post.query.filter_by(category=category)
+    thisCategory = Post.query.filter_by(category=category).first()
+    if thisCategory:
+        posts = Post.query.filter_by(category=category)
+    else:
+        return abort(404)
     return render_template("categorylist.html", posts=posts, category=category)
 
 #New Post Route
@@ -176,8 +184,6 @@ def add_post():
             form.header_image.data.save(fullpath)
 
             post = Post(title = form.title.data, category = form.category.data, draft = form.draft.data, body = form.body.data, header_image = filename, header_image_path = fullpath)
-
-            
 
             db.session.add(post)
             db.session.commit()
