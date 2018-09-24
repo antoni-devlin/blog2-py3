@@ -24,7 +24,8 @@
 
   .main-grid-container {
     display: grid;
-    grid-template-columns: 1fr 5fr 1fr; }
+    grid-template-columns: 1fr 5fr 1fr;
+    min-height: calc(100vh - 120px); }
 
     .each-post-grid-container {
       display: grid;
@@ -34,8 +35,7 @@
       .homepage-post {
         padding-bottom: 5%; }
         .homepage-post p {
-          text-align: justify;
-          font-family: Garamond; }
+          text-align: justify; }
           .homepage-post a {
             text-decoration: none;
             color: black; }
@@ -78,7 +78,7 @@
       padding: 15px; }
 
 footer {
-  height: 60px; }
+  height: 0px; }
   footer .builtby {
     padding: 20px;
     float: left; }

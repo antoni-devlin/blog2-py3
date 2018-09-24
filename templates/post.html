@@ -3,7 +3,7 @@
 {% block content %}
 <div class="post-grid-container">
     <div class="homepage-post">
-        <h3 class="post-heading"> {{post.title|title}}</h3> <aside class="category"> {{post.category}} </aside>
+        <h3 class="post-heading"> {{post.title|title}}</h3> <aside class="category"> {{post.category|title}} </aside>
         <br>
         {% include "_editButtons.html" %}
 
@@ -17,7 +17,7 @@
         {% endif %}
         </div>
 
-        <p> {{post.body | safe | oembed(html=False, urlize_all=False, maxwidth=600, maxheight=600)}} </p>
+        <span class='post-body'>{{post.body | safe | oembed(html=False, urlize_all=False, maxwidth=600, maxheight=600)}}</span>
         </div>
 
 </div>

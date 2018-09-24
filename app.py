@@ -162,11 +162,13 @@ def admin():
     return render_template('admin.html', posts=posts, writing_posts=writing_posts, tech_posts=tech_posts, food_posts=food_posts, video_posts=video_posts)
 
 #Display category page
-@app.route('/<string:category>')
+@app.route('/category/<string:category>')
 def bycategory(category):
     thisCategory = Post.query.filter_by(category=category).first()
     if thisCategory:
-        posts = Post.query.filter_by(category=category)
+        posts = Post.query.filter_by(category=category, draft=False)
+    elif thisCategory is None:
+        print("No Posts.")
     else:
         return abort(404)
     return render_template("categorylist.html", posts=posts, category=category)

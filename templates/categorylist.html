@@ -3,12 +3,19 @@
 
 {% block content %}
 
-<h1> {{ category|title }} </h1>
+<h1> Category: {{ category|title }} </h1>
 
 {% for post in posts %}
-    <h2> {{post.title|title}} </h2>
-    <p>{{post.date_posted.strftime('%d %B, %Y')}}</p>
-    <img src="/static/media/images/{{post.header_image}}" alt="">
+    <div style="padding-bottom: 25px;">
+        <div style="float:left">
+            <a href="{{ url_for('byslug', slug=post.slug)}}"> <img style="padding-right:10px;" src="/static/media/images/{{post.header_image}}" alt=""> </a>
+        </div>
+        <div style="text-align:justify; margin-bottom: 10px;">
+            <a style="text-decoration:none; color:black;" href="{{ url_for('byslug', slug=post.slug)}}"> <h2> {{post.title|title}} </h2> </a>
+            <p>{{post.date_posted.strftime('%d %B, %Y')}}</p>
+            <p> {{post.body|truncate(700)|safe}} </p>
+        </div>
+    </div>
     <hr>
 {% endfor %}
 

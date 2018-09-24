@@ -29,24 +29,9 @@
     </head>
     {% endblock head %}
     <body>
-        <div class="navigation">
-            <ul>
-                <li><a href="{{url_for('index')}}">Home</a></li>
-                <li><a href="{{url_for('contact')}}">Contact</a></li>
-                <li><a href="{{url_for('about')}}">About</a></li>
-                {% if current_user.is_authenticated %}
-                <li><a href="{{url_for('admin')}}">Dashboard</a></li>
-                <li><a href="{{url_for('add_post')}}">New Post</a></li>
-                {% endif %}
-                {% if current_user.is_anonymous %}
-                <li><a href="{{url_for('login')}}">Login</a></li>
-                {% else %}
-                <li><a href="{{url_for('logout')}}">Logout</a></li>
-                {% endif %}
 
+        {% include "navbar.html" %}
 
-            </ul>
-        </div>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul>
