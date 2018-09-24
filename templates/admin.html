@@ -80,7 +80,28 @@ body {font-family: Arial;}
   </div>
 
   <div id="Categories" class="tabcontent">
-      
+      <table class=admin-table>
+         <tr>
+          <th>Writing</th>
+          <th>Tech</th>
+          <th>Food</th>
+          <th>Video</th>
+          </tr>
+          <tr>
+              {% for post in writing_posts %}
+                <td> {{ post.title }} </td>
+              {% endfor %}
+              {% for post in tech_posts %}
+                <td>{{ post.title }}</td>
+              {% endfor %}
+              {% for post in food_posts %}
+                <td>{{ post.title }}</td>
+              {% endfor %}
+              {% for post in video_posts %}
+                <td>{{ post.title }}</td>
+              {% endfor %}
+          </tr>
+      </table>
   </div>
 
   <div id="Settings" class="tabcontent">
